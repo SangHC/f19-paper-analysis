@@ -9,7 +9,7 @@ mild = [9;13;18;20;24;25;28];
 moderate = [7;8;10;12;14];
 
 % choose set
-patients = normals;
+patients = 15;
 for i = 1:length(patients)
     
     % load ventilaion
@@ -128,7 +128,7 @@ for i = 1:length(patients)
     f19_lung = MIP.*double(MOVING_transformed);
 %     
 %     window_f19 = [16 45];
-%     plot_title = sprintf('Subject %i', patients(i));
+     plot_title = sprintf('Subject %i', patients(i));
 % 
 %     subplot(4,4,1)   
 %     imshow(f19_lung(:,:,2), window_f19)  
@@ -172,14 +172,28 @@ for i = 1:length(patients)
 %     FileName = char(strcat(FigureDirectory,FigureName,'.png'));
 %     saveas(gcf,FileName)
 
-    %% Create RGB Maps for Image
-    [f19_rgb] = PlotRGB_f19(patients(i),f19_lung,0.5,15.5,21.5,40.5);
+    % Create RGB Maps for Image
+    [f19_rgb UnventilatedMap] = PlotRGB_f19(patients(i),f19_lung,0.5,15.5,21.5,40.5);
          
     %% Compute Overlap and combined volumes
     [Overlap_Volumes(i) Combined_Volumes(i)] = ComputeCombinedOverlapVolumes(fixed , MOVING_transformed , 0.3125 , 1.5 );
     Anatomic_Volumes(i) = sum(fixed(:))*.3125*.3125*1.5;
     Ventilation_Volumes(i) = sum(MOVING_transformed(:))*.3125*.3125*1.5;
     
+%     %% Create histograms for each subject
+%     histogram(f19_lung(f19_lung>0)) % only vals inside lung
+%     title(sprintf('Subject %i F19 Intensity Histogram', patients(i)))
+%     xlabel('Pixel Intensity')
+%     ylabel('Number of Pixels')
+%     xlim([0 130])
+%     ylim([0 4000])
+    
+%     %% Save figure (optional)
+%     FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\f19_histogram\moderate-severe\');  mkdir(FigureDirectory);
+%     FigureName = strcat('Registration_Patient_',string(patients(i)));
+%     FileName = char(strcat(FigureDirectory,FigureName,'.png'));
+%     saveas(gcf,FileName)
+%     
     %% Pause and return to home
     pause(0.1)
     cd(home)
