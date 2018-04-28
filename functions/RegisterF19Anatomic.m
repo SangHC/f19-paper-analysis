@@ -9,7 +9,7 @@ mild = [9;13;18;20;24;25;28];
 moderate = [7;8;10;12;14];
 
 % choose set
-patients = 15;
+patients = all;
 for i = 1:length(patients)
     
     % load ventilaion
@@ -174,6 +174,9 @@ for i = 1:length(patients)
 
     % Create RGB Maps for Image
     [f19_rgb UnventilatedMap] = PlotRGB_f19(patients(i),f19_lung,0.5,15.5,21.5,40.5);
+
+    % Plot Unventilated Map
+    PlotUnventilatedMap(patients(i),UnventilatedMap);
          
     %% Compute Overlap and combined volumes
     [Overlap_Volumes(i) Combined_Volumes(i)] = ComputeCombinedOverlapVolumes(fixed , MOVING_transformed , 0.3125 , 1.5 );
