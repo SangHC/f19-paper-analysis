@@ -9,7 +9,7 @@ mild = [9;13;18;20;24;25;28];
 moderate = [7;8;10;12;14];
 
 % choose set
-patients = 18;
+patients = normals;
 for i = 1:length(patients)
     
     % load ventilaion
@@ -121,48 +121,49 @@ for i = 1:length(patients)
     
     %% Format MIP Image
     MIP = max(image,[],4);
+    clear image
     MIP = imresize(MIP,[128,128]);
     
     %% Select only MIP inside anatomic
     f19_lung = MIP.*double(MOVING_transformed);
-    
-    window_f19 = [16 45];
-    plot_title = sprintf('Subject %i', patients(i));
-
-    subplot(4,4,1)   
-    imshow(f19_lung(:,:,2), window_f19)  
-    title(plot_title)
-    
-    subplot(4,4,2)    
-    imshow(f19_lung(:,:,3), window_f19)
-    subplot(4,4,3)    
-    imshow(f19_lung(:,:,4), window_f19)
-    subplot(4,4,4)
-    imshow(f19_lung(:,:,5), window_f19)
-    subplot(4,4,5)
-    imshow(f19_lung(:,:,6), window_f19)
-    subplot(4,4,6)
-    imshow(f19_lung(:,:,7), window_f19)
-    subplot(4,4,7)
-    imshow(f19_lung(:,:,8), window_f19)
-    subplot(4,4,8)
-    imshow(f19_lung(:,:,9), window_f19)
-    subplot(4,4,9)
-    imshow(f19_lung(:,:,10), window_f19)
-    subplot(4,4,10)
-    imshow(f19_lung(:,:,11), window_f19)
-    subplot(4,4,11)
-    imshow(f19_lung(:,:,12), window_f19)
-    subplot(4,4,12)
-    imshow(f19_lung(:,:,13), window_f19)
-    subplot(4,4,13)
-    imshow(f19_lung(:,:,14), window_f19)
-    subplot(4,4,14)
-    imshow(f19_lung(:,:,15), window_f19)
-    subplot(4,4,15)
-    imshow(f19_lung(:,:,16), window_f19)
-    subplot(4,4,16)
-    imshow(f19_lung(:,:,17), window_f19)
+%     
+%     window_f19 = [16 45];
+%     plot_title = sprintf('Subject %i', patients(i));
+% 
+%     subplot(4,4,1)   
+%     imshow(f19_lung(:,:,2), window_f19)  
+%     title(plot_title)
+%     
+%     subplot(4,4,2)    
+%     imshow(f19_lung(:,:,3), window_f19)
+%     subplot(4,4,3)    
+%     imshow(f19_lung(:,:,4), window_f19)
+%     subplot(4,4,4)
+%     imshow(f19_lung(:,:,5), window_f19)
+%     subplot(4,4,5)
+%     imshow(f19_lung(:,:,6), window_f19)
+%     subplot(4,4,6)
+%     imshow(f19_lung(:,:,7), window_f19)
+%     subplot(4,4,7)
+%     imshow(f19_lung(:,:,8), window_f19)
+%     subplot(4,4,8)
+%     imshow(f19_lung(:,:,9), window_f19)
+%     subplot(4,4,9)
+%     imshow(f19_lung(:,:,10), window_f19)
+%     subplot(4,4,10)
+%     imshow(f19_lung(:,:,11), window_f19)
+%     subplot(4,4,11)
+%     imshow(f19_lung(:,:,12), window_f19)
+%     subplot(4,4,12)
+%     imshow(f19_lung(:,:,13), window_f19)
+%     subplot(4,4,13)
+%     imshow(f19_lung(:,:,14), window_f19)
+%     subplot(4,4,14)
+%     imshow(f19_lung(:,:,15), window_f19)
+%     subplot(4,4,15)
+%     imshow(f19_lung(:,:,16), window_f19)
+%     subplot(4,4,16)
+%     imshow(f19_lung(:,:,17), window_f19)
     
    
 %     %% Save figure (optional)
@@ -171,13 +172,16 @@ for i = 1:length(patients)
 %     FileName = char(strcat(FigureDirectory,FigureName,'.png'));
 %     saveas(gcf,FileName)
 
+    %% Create RGB Maps for Image
+    [f19_rgb] = PlotRGB_f19(patients(i),f19_lung,0.5,15.5,21.5,40.5);
+         
     %% Compute Overlap and combined volumes
     [Overlap_Volumes(i) Combined_Volumes(i)] = ComputeCombinedOverlapVolumes(fixed , MOVING_transformed , 0.3125 , 1.5 );
     Anatomic_Volumes(i) = sum(fixed(:))*.3125*.3125*1.5;
     Ventilation_Volumes(i) = sum(MOVING_transformed(:))*.3125*.3125*1.5;
     
     %% Pause and return to home
-    pause(1)
+    pause(0.1)
     cd(home)
 
     
