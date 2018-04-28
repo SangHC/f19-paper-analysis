@@ -4,12 +4,12 @@ home = pwd;
 
 % choose patient
 all = [2;3;4;5;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;24;25;26;27;28;33];
-normals = [2;3;4;5;11;15;16;17;19;21];
-mild = [9;10;13;18;20;24;25];
-moderate = [7;8;12;14;22];
+normals = [2;3;4;5;15;16;17;19;26];
+mild = [9;13;18;20;24;25;28];
+moderate = [7;8;10;12;14];
 
 % choose set
-patients = 13;
+patients = 18;
 for i = 1:length(patients)
     
     % load ventilaion
@@ -17,15 +17,15 @@ for i = 1:length(patients)
     %filename = strcat('0509-015','.mat');
     filename = strcat('0509-',num2str(patients(i),'%03d'),'.mat');
     load(filename);
-    moving = imresize(roi,[128,128]); % f19 is moving
+    fixed = imresize(roi,[128,128]); % f19 is moving
 
     % load anatomical
     cd('G:\2017-Glass\mim\inspiration_anatomic_segmentations')
     %filename = strcat('0509-015','.mat');
     filename = strcat('0509-',num2str(patients(i),'%03d'),'.mat');
     load(filename)
-    fixed = imresize(inspiration_ROI, [128,128]); % anat is fixed
-    fixed(:,:,16:18) = 0; % make fixed the same size as moving functional
+    moving = imresize(inspiration_ROI, [128,128]); % anat is fixed
+    moving(:,:,16:18) = 0; % make fixed the same size as moving functional
     
     % back to home directory
     cd(home)
@@ -75,64 +75,115 @@ for i = 1:length(patients)
     %optimizer.MaximumStepLength = 0.0625;
     %optimizer.MaximumIterations = 2;
     %optimizer.RelaxationFactor = 0.1;
-    f19_MOVING = imregister(uint8(moving), uint8(fixed), 'translation', optimizer, metric);
+    MOVING_transformed = imregister(uint8(moving), uint8(fixed), 'translation', optimizer, metric);
+    tform13    = imregtform(uint8(moving), uint8(fixed), 'translation', optimizer, metric);
 
-    %% Plot Registered Results
-    figure(1);clf
+%     %% Plot Registered Results
+%     figure(2);clf
+%     plot_title = sprintf('Subject %i', patients(i));
+% 
+%     subplot(4,4,1)
+%     imshowpair(fixed(:,:,2), MOVING_transformed(:,:,2),'Scaling','joint');
+%     title(plot_title)
+%     subplot(4,4,2)    
+%     imshowpair(fixed(:,:,3), MOVING_transformed(:,:,3),'Scaling','joint');
+%     subplot(4,4,3)    
+%     imshowpair(fixed(:,:,4), MOVING_transformed(:,:,4),'Scaling','joint');
+%     subplot(4,4,4)
+%     imshowpair(fixed(:,:,5), MOVING_transformed(:,:,5),'Scaling','joint');
+%     subplot(4,4,5)
+%     imshowpair(fixed(:,:,6), MOVING_transformed(:,:,6),'Scaling','joint');
+%     subplot(4,4,6)
+%     imshowpair(fixed(:,:,7), MOVING_transformed(:,:,7),'Scaling','joint');
+%     subplot(4,4,7)
+%     imshowpair(fixed(:,:,8), MOVING_transformed(:,:,8),'Scaling','joint');
+%     subplot(4,4,8)
+%     imshowpair(fixed(:,:,9), MOVING_transformed(:,:,9),'Scaling','joint');
+%     subplot(4,4,9)
+%     imshowpair(fixed(:,:,10), MOVING_transformed(:,:,10),'Scaling','joint');
+%     subplot(4,4,10)
+%     imshowpair(fixed(:,:,11), MOVING_transformed(:,:,11),'Scaling','joint');
+%     subplot(4,4,11)
+%     imshowpair(fixed(:,:,12), MOVING_transformed(:,:,12),'Scaling','joint');
+%     subplot(4,4,12)
+%     imshowpair(fixed(:,:,13), MOVING_transformed(:,:,13),'Scaling','joint');
+%     subplot(4,4,13)
+%     imshowpair(fixed(:,:,14), MOVING_transformed(:,:,14),'Scaling','joint');
+%     subplot(4,4,14)
+%     imshowpair(fixed(:,:,15), MOVING_transformed(:,:,15),'Scaling','joint');
+%     subplot(4,4,15)
+%     imshowpair(fixed(:,:,16), MOVING_transformed(:,:,16),'Scaling','joint');
+%     subplot(4,4,16)
+%     imshowpair(fixed(:,:,17), MOVING_transformed(:,:,17),'Scaling','joint');
+    
+    %% Show MIP Image
+    figure(3);clf
+    
+    %% Format MIP Image
+    MIP = max(image,[],4);
+    MIP = imresize(MIP,[128,128]);
+    
+    %% Select only MIP inside anatomic
+    f19_lung = MIP.*double(MOVING_transformed);
+    
+    window_f19 = [16 45];
     plot_title = sprintf('Subject %i', patients(i));
 
-    subplot(4,4,1)
-    imshowpair(fixed(:,:,2), f19_MOVING(:,:,2),'Scaling','joint');
+    subplot(4,4,1)   
+    imshow(f19_lung(:,:,2), window_f19)  
     title(plot_title)
+    
     subplot(4,4,2)    
-    imshowpair(fixed(:,:,3), f19_MOVING(:,:,3),'Scaling','joint');
+    imshow(f19_lung(:,:,3), window_f19)
     subplot(4,4,3)    
-    imshowpair(fixed(:,:,4), f19_MOVING(:,:,4),'Scaling','joint');
+    imshow(f19_lung(:,:,4), window_f19)
     subplot(4,4,4)
-    imshowpair(fixed(:,:,5), f19_MOVING(:,:,5),'Scaling','joint');
+    imshow(f19_lung(:,:,5), window_f19)
     subplot(4,4,5)
-    imshowpair(fixed(:,:,6), f19_MOVING(:,:,6),'Scaling','joint');
+    imshow(f19_lung(:,:,6), window_f19)
     subplot(4,4,6)
-    imshowpair(fixed(:,:,7), f19_MOVING(:,:,7),'Scaling','joint');
+    imshow(f19_lung(:,:,7), window_f19)
     subplot(4,4,7)
-    imshowpair(fixed(:,:,8), f19_MOVING(:,:,8),'Scaling','joint');
+    imshow(f19_lung(:,:,8), window_f19)
     subplot(4,4,8)
-    imshowpair(fixed(:,:,9), f19_MOVING(:,:,9),'Scaling','joint');
+    imshow(f19_lung(:,:,9), window_f19)
     subplot(4,4,9)
-    imshowpair(fixed(:,:,10), f19_MOVING(:,:,10),'Scaling','joint');
+    imshow(f19_lung(:,:,10), window_f19)
     subplot(4,4,10)
-    imshowpair(fixed(:,:,11), f19_MOVING(:,:,11),'Scaling','joint');
+    imshow(f19_lung(:,:,11), window_f19)
     subplot(4,4,11)
-    imshowpair(fixed(:,:,12), f19_MOVING(:,:,12),'Scaling','joint');
+    imshow(f19_lung(:,:,12), window_f19)
     subplot(4,4,12)
-    imshowpair(fixed(:,:,13), f19_MOVING(:,:,13),'Scaling','joint');
+    imshow(f19_lung(:,:,13), window_f19)
     subplot(4,4,13)
-    imshowpair(fixed(:,:,14), f19_MOVING(:,:,14),'Scaling','joint');
+    imshow(f19_lung(:,:,14), window_f19)
     subplot(4,4,14)
-    imshowpair(fixed(:,:,15), f19_MOVING(:,:,15),'Scaling','joint');
+    imshow(f19_lung(:,:,15), window_f19)
     subplot(4,4,15)
-    imshowpair(fixed(:,:,16), f19_MOVING(:,:,16),'Scaling','joint');
+    imshow(f19_lung(:,:,16), window_f19)
     subplot(4,4,16)
-    imshowpair(fixed(:,:,17), f19_MOVING(:,:,17),'Scaling','joint');
+    imshow(f19_lung(:,:,17), window_f19)
     
    
 %     %% Save figure (optional)
-%     FigureDirectory    = strcat('G:/2017-Glass/f19_fit_results/StretchTranslationRegistration/');  mkdir(FigureDirectory);
+%     FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\MIP_registered\moderateORsevere\');  mkdir(FigureDirectory);
 %     FigureName = strcat('Registration_Patient_',string(patients(i)));
 %     FileName = char(strcat(FigureDirectory,FigureName,'.png'));
 %     saveas(gcf,FileName)
 
     %% Compute Overlap and combined volumes
-    [Overlap_Volumes(i) Combined_Volumes(i)] = ComputeCombinedOverlapVolumes(fixed , f19_MOVING , 0.3125 , 1.5 );
+    [Overlap_Volumes(i) Combined_Volumes(i)] = ComputeCombinedOverlapVolumes(fixed , MOVING_transformed , 0.3125 , 1.5 );
     Anatomic_Volumes(i) = sum(fixed(:))*.3125*.3125*1.5;
-    Ventilation_Volumes(i) = sum(f19_MOVING(:))*.3125*.3125*1.5;
+    Ventilation_Volumes(i) = sum(MOVING_transformed(:))*.3125*.3125*1.5;
     
     %% Pause and return to home
     pause(1)
     cd(home)
+
     
     
 end
+
 
 AnatomicVolumes = Anatomic_Volumes'
 VentilationVolumes = Ventilation_Volumes'
