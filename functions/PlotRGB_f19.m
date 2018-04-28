@@ -1,15 +1,16 @@
-function [ RGB_F19_MATRIX ] = PlotRGB_f19( patientNumber, f19_image, background, low_vent, mid_vent, high_vent )
+function [ RGB_F19_MATRIX UnventilatedMap ] = PlotRGB_f19( patientNumber, f19_image, background, low_vent, mid_vent, high_vent )
 %Creates RGB matrix for f19 MIP and plots resulting rgb image
 
 %% Create RGB Array for f19 MIP image using thresholding
 % preallocate for speed
-RGB_F19_MATRIX = zeros(128,128,18,3,'uint8');
+RGB_F19_MATRIX  = zeros(128,128,18,3,'uint8');
+UnventilatedMap = zeros(128,128,18,'uint8');
 
 for slice=1:18
     for row = 1:128
         for col = 1:128
             if     (f19_image(row,col,slice)<background)
-                % color cyan
+                % color grey
                 RGB_F19_MATRIX(row,col,slice,1) = 185;
                 RGB_F19_MATRIX(row,col,slice,2) = 185;
                 RGB_F19_MATRIX(row,col,slice,3) = 185;
@@ -20,6 +21,8 @@ for slice=1:18
                 RGB_F19_MATRIX(row,col,slice,1) = 0;
                 RGB_F19_MATRIX(row,col,slice,2) = 0;
                 RGB_F19_MATRIX(row,col,slice,3) = 0;
+                
+                UnventilatedMap(row,col,slice) = 1;
                 
             elseif (f19_image(row,col,slice)>low_vent   && ...
                     f19_image(row,col,slice)<mid_vent)
