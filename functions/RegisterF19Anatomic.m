@@ -9,7 +9,7 @@ mild = [9;13;18;20;24;25;28];
 moderate = [7;8;10;12;14];
 
 % choose set
-patients = all;
+patients = moderate;
 for i = 1:length(patients)
     
     % load ventilaion
@@ -173,7 +173,7 @@ for i = 1:length(patients)
 %     saveas(gcf,FileName)
 
     % Create RGB Maps for Image
-    [f19_rgb UnventilatedMap] = PlotRGB_f19(patients(i),f19_lung,0.5,15.5,21.5,40.5);
+    [f19_rgb UnventilatedMap] = PlotRGB_f19(patients(i),f19_lung,0.5,12.5,21.5,40.5);
 
     % Plot Unventilated Map
     PlotUnventilatedMap(patients(i),UnventilatedMap);
@@ -200,6 +200,9 @@ for i = 1:length(patients)
     %% Pause and return to home
     pause(0.1)
     cd(home)
+    
+    %% Compute Unventilated Map Volume
+    UnventilatedVolumes(i) = sum(UnventilatedMap(:))*.3125*.3125*1.5;
 
     
     
@@ -207,6 +210,14 @@ end
 
 
 AnatomicVolumes = Anatomic_Volumes'
-VentilationVolumes = Ventilation_Volumes'
-VentilationDefectVolumes = Anatomic_Volumes'-Overlap_Volumes'
-VentilationDefectPercent = 100*VentilationDefectVolumes./AnatomicVolumes
+%VentilationVolumes = Ventilation_Volumes'
+
+%VentilationDefectVolumes = Anatomic_Volumes'-Overlap_Volumes'
+%VentilationDefectPercent = 100*VentilationDefectVolumes./AnatomicVolumes
+
+
+VDV = UnventilatedVolumes'
+VentilationDefectPercent = 100*VDV./AnatomicVolumes
+
+
+close all
