@@ -19,7 +19,7 @@ end
 Fixed_ApexBaseMeasurement_pixels = sum(fixed_row_maximums(:));
 
 %% Stretch moving by ratio of measurements
-StretchRatio = Fixed_ApexBaseMeasurement_pixels/Moving_ApexBaseMeasurement_pixels;
+StretchRatio = Fixed_ApexBaseMeasurement_pixels/Moving_ApexBaseMeasurement_pixels - 0.1;
 NumberRows_stretched = round(moving_dimensions(1)*StretchRatio);
 moving_stretched = imresize(moving, [ NumberRows_stretched    moving_dimensions(2) ]);
 
