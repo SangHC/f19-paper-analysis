@@ -5,11 +5,11 @@ home = pwd;
 % choose patient
 all = [2;3;4;5;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;24;25;26;27;28;33];
 normals = [2;3;4;5;15;16;17;19;26];
-mild = [9;13;18;20;24;25;28];
+mild = [9;13;18;20;24;25;28;29];
 moderate = [7;8;10;12;14];
 
 % choose set
-patients = moderate;
+patients = 16;
 for i = 1:length(patients)
     
     % load ventilaion
@@ -117,7 +117,7 @@ for i = 1:length(patients)
 %     imshowpair(fixed(:,:,17), MOVING_transformed(:,:,17),'Scaling','joint');
     
     %% Show MIP Image
-    figure(3);clf
+    %figure(3);clf
     
     %% Format MIP Image
     MIP = max(image,[],4);
@@ -173,15 +173,15 @@ for i = 1:length(patients)
 %     saveas(gcf,FileName)
 
     % Create RGB Maps for Image
-    [f19_rgb UnventilatedMap] = PlotRGB_f19(patients(i),f19_lung,0.5,12.5,21.5,40.5);
+    [f19_rgb UnventilatedMap MinimalVentMap ModerateVentMap HighVentMap] = PlotRGB_f19(patients(i),f19_lung,0.5,14.5,25.5,40.5);
 
     % Plot Unventilated Map
-    PlotUnventilatedMap(patients(i),UnventilatedMap);
+    %PlotUnventilatedMap(patients(i),UnventilatedMap);
          
     %% Compute Overlap and combined volumes
-    [Overlap_Volumes(i) Combined_Volumes(i)] = ComputeCombinedOverlapVolumes(fixed , MOVING_transformed , 0.3125 , 1.5 );
-    Anatomic_Volumes(i) = sum(fixed(:))*.3125*.3125*1.5;
-    Ventilation_Volumes(i) = sum(MOVING_transformed(:))*.3125*.3125*1.5;
+    %[Overlap_Volumes(i) Combined_Volumes(i)] = ComputeCombinedOverlapVolumes(fixed , MOVING_transformed , 0.3125 , 1.5 );
+    % Anatomic_Volumes(i) = sum(fixed(:))*.3125*.3125*1.5;
+    %Ventilation_Volumes(i) = sum(MOVING_transformed(:))*.3125*.3125*1.5;
     
 %     %% Create histograms for each subject
 %     histogram(f19_lung(f19_lung>0)) % only vals inside lung
@@ -198,26 +198,30 @@ for i = 1:length(patients)
 %     saveas(gcf,FileName)
 %     
     %% Pause and return to home
-    pause(0.1)
+    pause(0.01)
     cd(home)
     
-    %% Compute Unventilated Map Volume
+    %% Compute Ventilated Volumes By Type
+    AnatomicVolumes(i) = sum(MOVING_transformed(:))*.3125*.3125*1.5;
     UnventilatedVolumes(i) = sum(UnventilatedMap(:))*.3125*.3125*1.5;
+    MinimallyVentilatedVolumes(i) = sum(MinimalVentMap(:))*.3125*.3125*1.5;
 
     
     
 end
 
+% Display to command
+AnatomicVolumes = AnatomicVolumes'
 
-AnatomicVolumes = Anatomic_Volumes'
-%VentilationVolumes = Ventilation_Volumes'
-
-%VentilationDefectVolumes = Anatomic_Volumes'-Overlap_Volumes'
-%VentilationDefectPercent = 100*VentilationDefectVolumes./AnatomicVolumes
+MinimalVentPercent = 100*(UnventilatedVolumes'+MinimallyVentilatedVolumes')./AnatomicVolumes
 
 
-VDV = UnventilatedVolumes'
-VentilationDefectPercent = 100*VDV./AnatomicVolumes
+VentilationDefectPercent = 100*UnventilatedVolumes'./AnatomicVolumes
+MEAN_VDP = mean(VentilationDefectPercent)
+STD_VDP  = std(VentilationDefectPercent)
 
+MEAN_MVP = mean(MinimalVentPercent)
+STD_MVP  = std(MinimalVentPercent)
 
-close all
+%close all
+
