@@ -3,13 +3,14 @@ clear;clc;
 home = pwd;
 
 % choose patient
-all = [2;3;4;5;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;24;25;26;27;28;33];
-normals = [2;3;4;5;15;16;17;19;26];
-mild = [9;13;18;20;24;25;28;29];
-moderate = [7;8;10;12;14];
+all = [2;3;4;5;7;8;9;10;12;13;14;15;16;17;18;19;20;24;25;26;28;29;30;31;32;33;34;35;37;39;40];
+
+normals = [2;3;4;5;15;16;17;19;26;31;37;39;40];
+mild = [9;13;18;20;24;25;28;29;30;32;33;35];
+moderate = [7;8;10;12;14;34];
 
 % choose set
-patients = 16;
+patients = all;
 for i = 1:length(patients)
     
     % load ventilaion
@@ -65,7 +66,7 @@ for i = 1:length(patients)
 %     subplot(4,4,16)
 %     imshowpair(fixed(:,:,17), moving(:,:,17),'Scaling','joint');
     
-    %% Stretch F19 to match anatomic respiratory effort
+    %% Stretch moving to match respiratory effort of fixed
     moving = Stretch_Functional3D(moving,fixed);
 
     %% Set up registration
@@ -77,6 +78,9 @@ for i = 1:length(patients)
     %optimizer.RelaxationFactor = 0.1;
     MOVING_transformed = imregister(uint8(moving), uint8(fixed), 'translation', optimizer, metric);
     tform13    = imregtform(uint8(moving), uint8(fixed), 'translation', optimizer, metric);
+    
+    %% Remove end slices from registered anatomic outline
+    MOVING_transformed = RemoveEdgeSlices(MOVING_transformed);
 
 %     %% Plot Registered Results
 %     figure(2);clf
@@ -172,8 +176,12 @@ for i = 1:length(patients)
 %     FileName = char(strcat(FigureDirectory,FigureName,'.png'));
 %     saveas(gcf,FileName)
 
-    % Create RGB Maps for Image
-    [f19_rgb UnventilatedMap MinimalVentMap ModerateVentMap HighVentMap] = PlotRGB_f19(patients(i),f19_lung,0.5,14.5,25.5,40.5);
+    %% Get Values for lowvent, midvent, highvent
+    [low_vent, mid_vent, high_vent] = FindMIPThresholdValues(MIP);
+
+    %% Create RGB Maps for Image
+    % background = 0.5 is just above 0
+    [f19_rgb UnventilatedMap MinimalVentMap ModerateVentMap HighVentMap] = PlotRGB_f19(patients(i),f19_lung, 0.5, low_vent, mid_vent, high_vent);
 
     % Plot Unventilated Map
     %PlotUnventilatedMap(patients(i),UnventilatedMap);
@@ -204,9 +212,9 @@ for i = 1:length(patients)
     %% Compute Ventilated Volumes By Type
     AnatomicVolumes(i) = sum(MOVING_transformed(:))*.3125*.3125*1.5;
     UnventilatedVolumes(i) = sum(UnventilatedMap(:))*.3125*.3125*1.5;
-    MinimallyVentilatedVolumes(i) = sum(MinimalVentMap(:))*.3125*.3125*1.5;
-
-    
+    MinimallyVentilatedVolumes(i)  = sum(MinimalVentMap(:) )*.3125*.3125*1.5;
+    ModeratelyVentilatedVolumes(i) = sum(ModerateVentMap(:))*.3125*.3125*1.5;
+    HighlyVentilatedVolumes(i)     = sum(HighVentMap(:)    )*.3125*.3125*1.5;   
     
 end
 
