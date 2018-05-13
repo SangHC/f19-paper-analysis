@@ -101,8 +101,9 @@ if WantToPlot
     
     pause(0.1)
 end
+
 %% Save figure (optional)
-% FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\RGB_f19\moderate\');  mkdir(FigureDirectory);
+% FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\updated_RGB_f19\moderate\');  mkdir(FigureDirectory);
 % FigureName = strcat('Registration_Patient_',string(patientNumber));
 % FileName = char(strcat(FigureDirectory,FigureName,'.png'));
 % saveas(gcf,FileName)
