@@ -10,8 +10,11 @@ moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = 14;
+patients = 18;
 % Choose plots and saving
+PlotMIPImageBool = 0;
+SaveMIPImageBool = 0;
+
 PlotSixSegmentModelBool = 1; % 1 for plotting 6 segment model
 SaveSixSegmentModelBool =0; % 1 for saving 6 segment model figures
 WriteCSVDataBool = 0; % 1 for saving CSV data
@@ -50,64 +53,18 @@ for i = 1:length(patients)
        
     %% Format MIP Image
     MIP = max(image,[],4);
-    clear image
-    MIP = imresize(MIP,[128,128]);
-    
-    %% Select only MIP inside anatomic
+    clear image % to avoid variable name confusion
+    MIP = imresize(MIP,[128,128]);    
+    % Select only MIP inside anatomic
     f19_lung = MIP.*double(MOVING_transformed);
-    
-    
-    %plot_title = sprintf('Subject %i', patients(i));
-    
-    % show MIP image
-    % figure(3);clf
-    %     window_f19 = [16 45];
-    
-    %
-    %     subplot(4,4,1)
-    %     imshow(f19_lung(:,:,2), window_f19)
-    %     title(plot_title)
-    %
-    %     subplot(4,4,2)
-    %     imshow(f19_lung(:,:,3), window_f19)
-    %     subplot(4,4,3)
-    %     imshow(f19_lung(:,:,4), window_f19)
-    %     subplot(4,4,4)
-    %     imshow(f19_lung(:,:,5), window_f19)
-    %     subplot(4,4,5)
-    %     imshow(f19_lung(:,:,6), window_f19)
-    %     subplot(4,4,6)
-    %     imshow(f19_lung(:,:,7), window_f19)
-    %     subplot(4,4,7)
-    %     imshow(f19_lung(:,:,8), window_f19)
-    %     subplot(4,4,8)
-    %     imshow(f19_lung(:,:,9), window_f19)
-    %     subplot(4,4,9)
-    %     imshow(f19_lung(:,:,10), window_f19)
-    %     subplot(4,4,10)
-    %     imshow(f19_lung(:,:,11), window_f19)
-    %     subplot(4,4,11)
-    %     imshow(f19_lung(:,:,12), window_f19)
-    %     subplot(4,4,12)
-    %     imshow(f19_lung(:,:,13), window_f19)
-    %     subplot(4,4,13)
-    %     imshow(f19_lung(:,:,14), window_f19)
-    %     subplot(4,4,14)
-    %     imshow(f19_lung(:,:,15), window_f19)
-    %     subplot(4,4,15)
-    %     imshow(f19_lung(:,:,16), window_f19)
-    %     subplot(4,4,16)
-    %     imshow(f19_lung(:,:,17), window_f19)
-    
-    
-    %     %% Save figure (optional)
-    %     FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\MIP_registered\moderateORsevere\');  mkdir(FigureDirectory);
-    %     FigureName = strcat('Registration_Patient_',string(patients(i)));
-    %     FileName = char(strcat(FigureDirectory,FigureName,'.png'));
-    %     saveas(gcf,FileName)
     
     %% Compute Values for lowvent, midvent, highvent
     [low_vent, mid_vent, high_vent] = FindMIPThresholdValues(MIP);
+    
+    %% Plot MIP Image on Figure 1 if Selected
+    if PlotMIPImageBool
+        PlotMIPImage(patients(i), SaveMIPImageBool, f19_lung, low_vent, high_vent)
+    end
     
     %% Create RGB Maps for Image
     % background = 0.5 is just above 0
@@ -122,7 +79,7 @@ for i = 1:length(patients)
     MiddleRightVolumes(i) = sum(MiddleRight(:))*.3125*.3125*1.5;
     LowerRightVolumes(i)  = sum(LowerRight(:) )*.3125*.3125*1.5;
     
-    %% Plot Six Segment Model if Chosen
+    %% Plot Six Segment Model if Selected
     if PlotSixSegmentModelBool
         PlotSixLungSegmentsRGB(patients(i) , UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
     end
