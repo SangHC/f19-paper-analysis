@@ -10,18 +10,18 @@ moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = 18;
+patients = all;
 % MIP image - figure 1
-PlotMIPImageBool = 1;
+PlotMIPImageBool = 0;
 SaveMIPImageBool = 0;
 % RGB Image - figure 2
-PlotRGBImageBool = 1;
+PlotRGBImageBool = 0;
 SaveRGBImageBool = 0;
 % Six Segment Image - figure 3
-PlotSixSegmentModelBool = 1; 
+PlotSixSegmentModelBool = 0; 
 SaveSixSegmentModelBool =0; 
 % Save CSV data to file
-WriteCSVDataBool = 0; 
+WriteCSVDataBool = 1; 
 
 %% Loop through selected subjects
 for i = 1:length(patients)
@@ -103,9 +103,9 @@ end
 %% Write Ventilation Data to CSV if Selected
 if WriteCSVDataBool
     % create data matrix
-    f19DataMatrix = [patients AnatomicVolumes UnventilatedVolumes' LowVentilatedVolumes' MiddleVentilatedVolumes' HighVentilatedVolumes'...
-                     100*UnventilatedVolumes'./AnatomicVolumes 100*LowVentilatedVolumes'./AnatomicVolumes ...
-                     100*MiddleVentilatedVolumes'./AnatomicVolumes 100*HighVentilatedVolumes'./AnatomicVolumes];
+    f19DataMatrix = [patients AnatomicVolumes' UnventilatedVolumes' LowVentilatedVolumes' MiddleVentilatedVolumes' HighVentilatedVolumes'...
+                     100*UnventilatedVolumes'./AnatomicVolumes' 100*LowVentilatedVolumes'./AnatomicVolumes' ...
+                     100*MiddleVentilatedVolumes'./AnatomicVolumes' 100*HighVentilatedVolumes'./AnatomicVolumes'];
     % make header
     cHeader = {'PatientNumber' 'AnatomicVolume(mL)' 'UnventilatedVolume(mL)' 'LowVentVolume(mL)' 'MediumVentVolume(mL)' 'HighVentVolume(mL)' 'Unventilated%' 'LowVent%' 'MediumVent%' 'HighVent%' };
     commaHeader = [cHeader;repmat({','},1,numel(cHeader))]; %insert commaas
