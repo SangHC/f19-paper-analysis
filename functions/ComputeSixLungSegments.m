@@ -21,7 +21,7 @@ SumsInsideLung = COLSUM(ColsInsideLung(1):ColsInsideLung(end));
 MiddleColumn = ColsInsideLung(1)+IndexCol -1;
 % Set up right and left segments
 LeftSegment (: , 1:MiddleColumn   , :) = 1;
-RightSegment(: , MiddleColumn:end , :) = 1;
+RightSegment(: , MiddleColumn+1:end , :) = 1;
 
 %% Get upper, middle, lower 1/3 segments
 % compute row sums
