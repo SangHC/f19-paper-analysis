@@ -10,7 +10,7 @@ mild = [9;13;18;20;24;25;28;29;30;32;33;35];
 moderate = [7;8;10;12;14;34];
 
 % choose set
-patients = all;
+patients = 18;
 for i = 1:length(patients)
     
     % load ventilaion
@@ -28,8 +28,9 @@ for i = 1:length(patients)
     moving = imresize(inspiration_ROI, [128,128]); % anat is fixed
     moving(:,:,16:18) = 0; % make fixed the same size as moving functional
     
-    % back to home directory
+    % back to home directory and add functions path
     cd(home)
+    addpath('./functions')
     
     %     % view images
     %     figure(1);clf
