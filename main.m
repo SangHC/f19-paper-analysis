@@ -12,16 +12,17 @@ moderate = [7;8;10;12;14;34];
 % choose subjects
 patients = 14;
 
-%
+% choose visualization and saving steps
 
 %% Loop through selected subjects
 for i = 1:length(patients)
     
+    %% Load and Format Initial Imaging Data
     % load f19 ventilaion
     cd('G:\2017-Glass\mim\f19_ventilation_segmentations')
     filename = strcat('0509-',num2str(patients(i),'%03d'),'.mat');
     load(filename);
-    % format fixed F19 image
+    % format fixed F19 image to same size as moving 1h mri
     fixed = imresize(roi,[128,128]);
     
     % load anatomical 1h mri
@@ -35,89 +36,16 @@ for i = 1:length(patients)
     % back to home directory and add functions path
     cd(home)
     addpath('./functions')
-    
-    %     % view images
-    %     figure(1);clf
-    %     subplot(4,4,1)
-    %     imshowpair(fixed(:,:,2), moving(:,:,2),'Scaling','joint');
-    %     subplot(4,4,2)
-    %     imshowpair(fixed(:,:,3), moving(:,:,3),'Scaling','joint');
-    %     subplot(4,4,3)
-    %     imshowpair(fixed(:,:,4), moving(:,:,4),'Scaling','joint');
-    %     subplot(4,4,4)
-    %     imshowpair(fixed(:,:,5), moving(:,:,5),'Scaling','joint');
-    %     subplot(4,4,5)
-    %     imshowpair(fixed(:,:,6), moving(:,:,6),'Scaling','joint');
-    %     subplot(4,4,6)
-    %     imshowpair(fixed(:,:,7), moving(:,:,7),'Scaling','joint');
-    %     subplot(4,4,7)
-    %     imshowpair(fixed(:,:,8), moving(:,:,8),'Scaling','joint');
-    %     subplot(4,4,8)
-    %     imshowpair(fixed(:,:,9), moving(:,:,9),'Scaling','joint');
-    %     subplot(4,4,9)
-    %     imshowpair(fixed(:,:,10), moving(:,:,10),'Scaling','joint');
-    %     subplot(4,4,10)
-    %     imshowpair(fixed(:,:,11), moving(:,:,11),'Scaling','joint');
-    %     subplot(4,4,11)
-    %     imshowpair(fixed(:,:,12), moving(:,:,12),'Scaling','joint');
-    %     subplot(4,4,12)
-    %     imshowpair(fixed(:,:,13), moving(:,:,13),'Scaling','joint');
-    %     subplot(4,4,13)
-    %     imshowpair(fixed(:,:,14), moving(:,:,14),'Scaling','joint');
-    %     subplot(4,4,14)
-    %     imshowpair(fixed(:,:,15), moving(:,:,15),'Scaling','joint');
-    %     subplot(4,4,15)
-    %     imshowpair(fixed(:,:,16), moving(:,:,16),'Scaling','joint');
-    %     subplot(4,4,16)
-    %     imshowpair(fixed(:,:,17), moving(:,:,17),'Scaling','joint');
-    
+       
     %% Stretch moving to match respiratory effort of fixed
     moving = Stretch_Functional3D(moving,fixed);
     
-    %% Set up registration
+    %% Use Translation Registration to Align Images
     [optimizer, metric] = imregconfig('monomodal');
     MOVING_transformed = imregister(uint8(moving), uint8(fixed), 'translation', optimizer, metric);
     
     %% Remove end slices from registered anatomic outline
     MOVING_transformed = RemoveEdgeSlices(MOVING_transformed);
-    
-    %     %% Plot Registered Results
-    %     figure(2);clf
-    %     plot_title = sprintf('Subject %i', patients(i));
-    %
-    %     subplot(4,4,1)
-    %     imshowpair(fixed(:,:,2), MOVING_transformed(:,:,2),'Scaling','joint');
-    %     title(plot_title)
-    %     subplot(4,4,2)
-    %     imshowpair(fixed(:,:,3), MOVING_transformed(:,:,3),'Scaling','joint');
-    %     subplot(4,4,3)
-    %     imshowpair(fixed(:,:,4), MOVING_transformed(:,:,4),'Scaling','joint');
-    %     subplot(4,4,4)
-    %     imshowpair(fixed(:,:,5), MOVING_transformed(:,:,5),'Scaling','joint');
-    %     subplot(4,4,5)
-    %     imshowpair(fixed(:,:,6), MOVING_transformed(:,:,6),'Scaling','joint');
-    %     subplot(4,4,6)
-    %     imshowpair(fixed(:,:,7), MOVING_transformed(:,:,7),'Scaling','joint');
-    %     subplot(4,4,7)
-    %     imshowpair(fixed(:,:,8), MOVING_transformed(:,:,8),'Scaling','joint');
-    %     subplot(4,4,8)
-    %     imshowpair(fixed(:,:,9), MOVING_transformed(:,:,9),'Scaling','joint');
-    %     subplot(4,4,9)
-    %     imshowpair(fixed(:,:,10), MOVING_transformed(:,:,10),'Scaling','joint');
-    %     subplot(4,4,10)
-    %     imshowpair(fixed(:,:,11), MOVING_transformed(:,:,11),'Scaling','joint');
-    %     subplot(4,4,11)
-    %     imshowpair(fixed(:,:,12), MOVING_transformed(:,:,12),'Scaling','joint');
-    %     subplot(4,4,12)
-    %     imshowpair(fixed(:,:,13), MOVING_transformed(:,:,13),'Scaling','joint');
-    %     subplot(4,4,13)
-    %     imshowpair(fixed(:,:,14), MOVING_transformed(:,:,14),'Scaling','joint');
-    %     subplot(4,4,14)
-    %     imshowpair(fixed(:,:,15), MOVING_transformed(:,:,15),'Scaling','joint');
-    %     subplot(4,4,15)
-    %     imshowpair(fixed(:,:,16), MOVING_transformed(:,:,16),'Scaling','joint');
-    %     subplot(4,4,16)
-    %     imshowpair(fixed(:,:,17), MOVING_transformed(:,:,17),'Scaling','joint');
     
     %% Show MIP Image
     %figure(3);clf
@@ -183,7 +111,7 @@ for i = 1:length(patients)
     % background = 0.5 is just above 0
     [f19_rgb UnventilatedMap MinimalVentMap ModerateVentMap HighVentMap] = PlotRGB_f19(patients(i),f19_lung, 0.5, low_vent, mid_vent, high_vent);
     
-    %% Create 6 Segments
+    %% Create 6 Segment Model and Compute Volumes of Segments
     [ UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight ] = ComputeSixLungSegments( MOVING_transformed );
     PlotSixLungSegmentsRGB(patients(i) , UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
     UpperLeftVolumes(i)   = sum(UpperLeft(:)  )*.3125*.3125*1.5;
@@ -215,11 +143,11 @@ for i = 1:length(patients)
     cd(home)
     
     %% Compute Ventilated Volumes By Type
-    AnatomicVolumes(i) = sum(MOVING_transformed(:))*.3125*.3125*1.5;
-    UnventilatedVolumes(i) = sum(UnventilatedMap(:))*.3125*.3125*1.5;
-    MinimallyVentilatedVolumes(i)  = sum(MinimalVentMap(:) )*.3125*.3125*1.5;
-    ModeratelyVentilatedVolumes(i) = sum(ModerateVentMap(:))*.3125*.3125*1.5;
-    HighlyVentilatedVolumes(i)     = sum(HighVentMap(:)    )*.3125*.3125*1.5;
+    AnatomicVolumes(i)             = sum(MOVING_transformed(:))*0.3125*0.3125*1.5;
+    UnventilatedVolumes(i)         = sum(UnventilatedMap(:))   *0.3125*0.3125*1.5;
+    MinimallyVentilatedVolumes(i)  = sum(MinimalVentMap(:))    *0.3125*0.3125*1.5;
+    ModeratelyVentilatedVolumes(i) = sum(ModerateVentMap(:))   *0.3125*0.3125*1.5;
+    HighlyVentilatedVolumes(i)     = sum(HighVentMap(:))       *0.3125*0.3125*1.5;
     
 end
 
@@ -244,4 +172,3 @@ if WriteCSVData
     %write data to end of file
     dlmwrite('G:\2017-Glass\f19_fit_results\F19ventilationdata.csv',f19DataMatrix,'-append');    
 end
-
