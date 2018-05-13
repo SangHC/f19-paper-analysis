@@ -1,32 +1,36 @@
-%% load images
+%% Initialize
 clear;clc;
 home = pwd;
 
-% choose patient
+%% Select Subjects and Visualization
+%subject groups
 all = [2;3;4;5;7;8;9;10;12;13;14;15;16;17;18;19;20;24;25;26;28;29;30;31;32;33;34;35;37;39;40];
-
 normals = [2;3;4;5;15;16;17;19;26;31;37;39;40];
 mild = [9;13;18;20;24;25;28;29;30;32;33;35];
 moderate = [7;8;10;12;14;34];
 
-% choose set
+% choose subjects
 patients = 14;
+
+%
+
+%% Loop through selected subjects
 for i = 1:length(patients)
     
-    % load ventilaion
+    % load f19 ventilaion
     cd('G:\2017-Glass\mim\f19_ventilation_segmentations')
-    %filename = strcat('0509-015','.mat');
     filename = strcat('0509-',num2str(patients(i),'%03d'),'.mat');
     load(filename);
-    fixed = imresize(roi,[128,128]); % f19 is moving
+    % format fixed F19 image
+    fixed = imresize(roi,[128,128]);
     
-    % load anatomical
+    % load anatomical 1h mri
     cd('G:\2017-Glass\mim\inspiration_anatomic_segmentations')
-    %filename = strcat('0509-015','.mat');
     filename = strcat('0509-',num2str(patients(i),'%03d'),'.mat');
     load(filename)
-    moving = imresize(inspiration_ROI, [128,128]); % anat is fixed
-    moving(:,:,16:18) = 0; % make fixed the same size as moving functional
+    % format anatomical 1h mri moving image
+    moving = imresize(inspiration_ROI, [128,128]);
+    moving(:,:,16:18) = 0; % add slices to make equal image sizes
     
     % back to home directory and add functions path
     cd(home)
