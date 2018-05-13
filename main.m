@@ -2,21 +2,20 @@
 clear;clc;
 home = pwd;
 
-%% Select Subjects and Visualization
-%subject groups
+%% Subject Groups
 all = [2;3;4;5;7;8;9;10;12;13;14;15;16;17;18;19;20;24;25;26;28;29;30;31;32;33;34;35;37;39;40];
 normals = [2;3;4;5;15;16;17;19;26;31;37;39;40];
 mild = [9;13;18;20;24;25;28;29;30;32;33;35];
 moderate = [7;8;10;12;14;34];
 
-% choose subjects
+%% Choose Parameters for Running
+% Choose patients
 patients = 14;
-
-% choose visualization and saving steps
+% Choose plots and saving
+WriteCSVData = 0; % 1 for saving CSV data
 
 %% Loop through selected subjects
 for i = 1:length(patients)
-    
     %% Load and Format Initial Imaging Data
     % load f19 ventilaion
     cd('G:\2017-Glass\mim\f19_ventilation_segmentations')
@@ -153,8 +152,7 @@ end
 
 %close all
 
-%% Write Ventilation Data to CSV
-WriteCSVData = 0;
+%% Write Ventilation Data to CSV if Selected
 if WriteCSVData
     % create data matrix
     f19DataMatrix = [patients AnatomicVolumes UnventilatedVolumes' MinimallyVentilatedVolumes' ModeratelyVentilatedVolumes' HighlyVentilatedVolumes'...
