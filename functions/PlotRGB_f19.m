@@ -60,9 +60,9 @@ end
 
 % Plot RGB Image on Figure 2
 
-figure(2);clf
-
 if PlotRGBImageBool
+    
+    figure(2);clf
     
     subplot(4,4,1)
     imshow(squeeze(RGB_F19_MATRIX(:,:,2,:)))
