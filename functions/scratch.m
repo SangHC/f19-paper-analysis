@@ -1,49 +1,52 @@
-%resizes f19
-% clc;
-% new_image = zeros(64,64,18,12);
-% for timepoint = 1:12
-%     for col = 1:64
-%         slice = image(:,col,:);
-%         slice = squeeze(slice);
-%         slice_resized = imresize(slice,[64,18]);
-%         new_image(:,col,:,timepoint) = slice_resized;
-%     end
-% end
+% creates 6 segments for f19
 
-pause(2)
-imagetoshow = squeeze(new_image(:,:,:,2));
-imshow(imagetoshow(:,:,1),[])
-pause(0.3)
-imshow(imagetoshow(:,:,2),[])
-pause(0.3)
-imshow(imagetoshow(:,:,3),[])
-pause(0.3)
-imshow(imagetoshow(:,:,4),[])
-pause(0.3)
-imshow(imagetoshow(:,:,5),[])
-pause(0.3)
-imshow(imagetoshow(:,:,6),[])
-pause(0.3)
-imshow(imagetoshow(:,:,7),[])
-pause(0.3)
-imshow(imagetoshow(:,:,8),[])
-pause(0.3)
-imshow(imagetoshow(:,:,9),[])
-pause(0.3)
-imshow(imagetoshow(:,:,10),[])
-pause(0.3)
-imshow(imagetoshow(:,:,11),[])
-pause(0.3)
-imshow(imagetoshow(:,:,12),[])
-pause(0.3)
-imshow(imagetoshow(:,:,13),[])
-pause(0.3)
-imshow(imagetoshow(:,:,14),[])
-pause(0.3)
-imshow(imagetoshow(:,:,15),[])
-pause(0.3)
-imshow(imagetoshow(:,:,16),[])
-pause(0.3)
-imshow(imagetoshow(:,:,17),[])
-pause(0.3)
-imshow(imagetoshow(:,:,18),[])
+% fun 6 segments = makesegments(moving-transformed)
+
+%% Set up segments
+InputVolume  = MOVING_transformed;
+LeftSegment  = uint8(zeros(size(InputVolume)));
+RightSegment = uint8(zeros(size(InputVolume)));
+UpperThird   = uint8(zeros(size(InputVolume)));
+MiddleThird  = uint8(zeros(size(InputVolume)));
+LowerThird   = uint8(zeros(size(InputVolume)));
+
+%% Get Right and Left Segments
+% Compute column sums
+for column = 1:128
+    COLSUM(column) = sum(sum(InputVolume(:,column,:)));
+end
+% Get Middle column 
+ColsInsideLung = find(COLSUM>50);
+SumsInsideLung = COLSUM(ColsInsideLung(1):ColsInsideLung(end));
+[MinimumColValue,IndexCol] = min(SumsInsideLung);
+MiddleColumn = ColsInsideLung(1)+IndexCol -1;
+% Set up right and left segments
+LeftSegment (: , 1:MiddleColumn   , :) = 1;
+RightSegment(: , MiddleColumn:end , :) = 1;
+
+%% Get upper, middle, lower 1/3 segments
+% compute row sums
+for row = 1:128
+    ROWSUM(row) = sum(sum(anat_out(row,:,:)));
+end
+% Get first and last column
+RowsInsideLung = find(ROWSUM>0);
+TopRow = RowsInsideLung(1); BottomRow = RowsInsideLung(end);
+RowWidth = round((BottomRow-TopRow)/3)
+% Set up upper, middle, lower third segments
+UpperThird  (TopRow:TopRow+RowWidth , : , :) = 1;
+MiddleThird (TopRow+RowWidth+1:TopRow+2*RowWidth +1 , : , :) = 1;
+LowerThird (TopRow+2*RowWidth +2:BottomRow , : , :) = 1;
+
+%% Use .* to Get All 6 Segments
+UpperLeftSegment   = LeftSegment  .*UpperThird  .*InputVolume;
+MiddleLeftSegment  = LeftSegment  .*MiddleThird .*InputVolume;
+LowerLeftSegment   = LeftSegment  .*LowerThird  .*InputVolume;
+UpperRightSegment  = RightSegment .*UpperThird  .*InputVolume;
+MiddleRightSegment = RightSegment .*MiddleThird .*InputVolume;
+LowerRightSegment  = RightSegment .*LowerThird  .*InputVolume;
+
+
+
+figure(4);clf
+imshow(UpperRightSegment(:,:,9),[])
