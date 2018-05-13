@@ -233,3 +233,23 @@ STD_MVP  = std(MinimalVentPercent)
 
 %close all
 
+%% Write Ventilation Data to CSV
+WriteCSVData = 0;
+if WriteCSVData
+    % create data matrix
+    f19DataMatrix = [patients AnatomicVolumes UnventilatedVolumes' MinimallyVentilatedVolumes' ModeratelyVentilatedVolumes' HighlyVentilatedVolumes'...
+                     100*UnventilatedVolumes'./AnatomicVolumes 100*MinimallyVentilatedVolumes'./AnatomicVolumes ...
+                     100*ModeratelyVentilatedVolumes'./AnatomicVolumes 100*HighlyVentilatedVolumes'./AnatomicVolumes];
+    % make header
+    cHeader = {'PatientNumber' 'AnatomicVolume(mL)' 'UnventilatedVolume(mL)' 'LowVentVolume(mL)' 'MediumVentVolume(mL)' 'HighVentVolume(mL)' 'Unventilated%' 'LowVent%' 'MediumVent%' 'HighVent%' };
+    commaHeader = [cHeader;repmat({','},1,numel(cHeader))]; %insert commaas
+    commaHeader = commaHeader(:)';
+    textHeader = cell2mat(commaHeader); %cHeader in text with commas
+    %write header to file
+    fid = fopen('G:\2017-Glass\f19_fit_results\F19ventilationdata.csv','w');
+    fprintf(fid,'%s\n',textHeader);
+    fclose(fid);
+    %write data to end of file
+    dlmwrite('G:\2017-Glass\f19_fit_results\F19ventilationdata.csv',f19DataMatrix,'-append');    
+end
+
