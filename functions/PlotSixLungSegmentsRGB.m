@@ -1,4 +1,4 @@
-function [ ] = PlotSixLungSegmentsRGB( patientNumber, UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
+function [ ] = PlotSixLungSegmentsRGB( patientNumber, SaveSixSegmentModelBool, UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
 %Creates RGB matrix for f19 MIP and plots resulting rgb image
 
 %% Create RGB Array for Six Segments
@@ -56,55 +56,51 @@ for slice=1:18
 end
 
 % Plot RGB Image
+figure(3);clf
 
-WantToPlot = 1;
-figure(2);clf
+subplot(4,4,1)
+imshow(squeeze(RGB_Six_Segments(:,:,2,:)))
+title(sprintf('Subject %i', patientNumber))
+subplot(4,4,2)
+imshow(squeeze(RGB_Six_Segments(:,:,3,:)))
+subplot(4,4,3)
+imshow(squeeze(RGB_Six_Segments(:,:,4,:)))
+subplot(4,4,4)
+imshow(squeeze(RGB_Six_Segments(:,:,5,:)))
+subplot(4,4,5)
+imshow(squeeze(RGB_Six_Segments(:,:,6,:)))
+subplot(4,4,6)
+imshow(squeeze(RGB_Six_Segments(:,:,7,:)))
+subplot(4,4,7)
+imshow(squeeze(RGB_Six_Segments(:,:,8,:)))
+subplot(4,4,8)
+imshow(squeeze(RGB_Six_Segments(:,:,9,:)))
+subplot(4,4,9)
+imshow(squeeze(RGB_Six_Segments(:,:,10,:)))
+subplot(4,4,10)
+imshow(squeeze(RGB_Six_Segments(:,:,11,:)))
+subplot(4,4,11)
+imshow(squeeze(RGB_Six_Segments(:,:,12,:)))
+subplot(4,4,12)
+imshow(squeeze(RGB_Six_Segments(:,:,13,:)))
+subplot(4,4,13)
+imshow(squeeze(RGB_Six_Segments(:,:,14,:)))
+subplot(4,4,14)
+imshow(squeeze(RGB_Six_Segments(:,:,15,:)))
+subplot(4,4,15)
+imshow(squeeze(RGB_Six_Segments(:,:,16,:)))
+subplot(4,4,16)
+imshow(squeeze(RGB_Six_Segments(:,:,17,:)))
 
-if WantToPlot
-    
-    subplot(4,4,1)
-    imshow(squeeze(RGB_Six_Segments(:,:,2,:)))
-    title(sprintf('Subject %i', patientNumber))
-    subplot(4,4,2)
-    imshow(squeeze(RGB_Six_Segments(:,:,3,:)))
-    subplot(4,4,3)
-    imshow(squeeze(RGB_Six_Segments(:,:,4,:)))
-    subplot(4,4,4)
-    imshow(squeeze(RGB_Six_Segments(:,:,5,:)))
-    subplot(4,4,5)
-    imshow(squeeze(RGB_Six_Segments(:,:,6,:)))
-    subplot(4,4,6)
-    imshow(squeeze(RGB_Six_Segments(:,:,7,:)))
-    subplot(4,4,7)
-    imshow(squeeze(RGB_Six_Segments(:,:,8,:)))
-    subplot(4,4,8)
-    imshow(squeeze(RGB_Six_Segments(:,:,9,:)))
-    subplot(4,4,9)
-    imshow(squeeze(RGB_Six_Segments(:,:,10,:)))
-    subplot(4,4,10)
-    imshow(squeeze(RGB_Six_Segments(:,:,11,:)))
-    subplot(4,4,11)
-    imshow(squeeze(RGB_Six_Segments(:,:,12,:)))
-    subplot(4,4,12)
-    imshow(squeeze(RGB_Six_Segments(:,:,13,:)))
-    subplot(4,4,13)
-    imshow(squeeze(RGB_Six_Segments(:,:,14,:)))
-    subplot(4,4,14)
-    imshow(squeeze(RGB_Six_Segments(:,:,15,:)))
-    subplot(4,4,15)
-    imshow(squeeze(RGB_Six_Segments(:,:,16,:)))
-    subplot(4,4,16)
-    imshow(squeeze(RGB_Six_Segments(:,:,17,:)))
-    
-    pause(0.1)
+pause(0.2)
+
+%Save figure (optional)
+if SaveSixSegmentModelBool
+    FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\SixSegmentModel2\');  mkdir(FigureDirectory);
+    FigureName = strcat('SixSegments_Patient_',string(patientNumber));
+    FileName = char(strcat(FigureDirectory,FigureName,'.png'));
+    saveas(gcf,FileName)
 end
-
-% %Save figure (optional)
-% FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\SixSegmentModel2\');  mkdir(FigureDirectory);
-% FigureName = strcat('SixSegments_Patient_',string(patientNumber));
-% FileName = char(strcat(FigureDirectory,FigureName,'.png'));
-% saveas(gcf,FileName)
-
 
 
 end

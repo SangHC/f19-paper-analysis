@@ -18,7 +18,7 @@ SaveMIPImageBool = 0;
 PlotRGBImageBool = 1;
 SaveRGBImageBool = 0;
 % Six Segment Image - figure 3
-PlotSixSegmentModelBool = 0; 
+PlotSixSegmentModelBool = 1; 
 SaveSixSegmentModelBool =0; 
 % Save CSV data to file
 WriteCSVDataBool = 0; 
@@ -70,8 +70,7 @@ for i = 1:length(patients)
         PlotMIPImage(patients(i), SaveMIPImageBool, f19_lung, low_vent, high_vent)
     end
     
-    %% Create and Plot RGB Maps
-    % background = 0.5 is just above 0
+    %% Create and Plot RGB Maps on Figure 2 if selected
     [f19_rgb , UnventilatedMap ,  LowVentMap , MiddleVentMap , HighVentMap] = PlotRGB_f19(patients(i),PlotRGBImageBool,SaveRGBImageBool,f19_lung, 0.5, low_vent, mid_vent, high_vent);
     
     %% Create 6 Segment Model and Compute Volumes of Segments
@@ -83,9 +82,9 @@ for i = 1:length(patients)
     MiddleRightVolumes(i) = sum(MiddleRight(:))*.3125*.3125*1.5;
     LowerRightVolumes(i)  = sum(LowerRight(:) )*.3125*.3125*1.5;
     
-    %% Plot Six Segment Model if Selected
+    %% Plot Six Segment Model on Figure 3 if Selected
     if PlotSixSegmentModelBool
-        PlotSixLungSegmentsRGB(patients(i) , UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
+        PlotSixLungSegmentsRGB(patients(i) , SaveSixSegmentModelBool,UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
     end
     
     %% Pause and return to home
