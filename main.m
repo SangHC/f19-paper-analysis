@@ -88,23 +88,6 @@ for i = 1:length(patients)
         PlotSixLungSegmentsRGB(patients(i) , UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
     end
     
-    % Plot Unventilated Map
-    %PlotUnventilatedMap(patients(i),UnventilatedMap);
-    
-    %     %% Create histograms for each subject
-    %     histogram(f19_lung(f19_lung>0)) % only vals inside lung
-    %     title(sprintf('Subject %i F19 Intensity Histogram', patients(i)))
-    %     xlabel('Pixel Intensity')
-    %     ylabel('Number of Pixels')
-    %     xlim([0 130])
-    %     ylim([0 4000])
-    
-    %     %% Save figure (optional)
-    %     FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\f19_histogram\moderate-severe\');  mkdir(FigureDirectory);
-    %     FigureName = strcat('Registration_Patient_',string(patients(i)));
-    %     FileName = char(strcat(FigureDirectory,FigureName,'.png'));
-    %     saveas(gcf,FileName)
-    %
     %% Pause and return to home
     pause(0.01)
     cd(home)
