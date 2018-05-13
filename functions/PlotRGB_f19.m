@@ -1,4 +1,4 @@
-function [ RGB_F19_MATRIX UnventilatedMap MinimalVentMap ModerateVentMap HighVentMap ] = PlotRGB_f19( patientNumber, f19_image, background, low_vent, mid_vent, high_vent )
+function [ RGB_F19_MATRIX UnventilatedMap MinimalVentMap ModerateVentMap HighVentMap ] = PlotRGB_f19( patientNumber, PlotRGBImageBool,SaveRGBImageBool,f19_image, background, low_vent, mid_vent, high_vent )
 %Creates RGB matrix for f19 MIP and plots resulting rgb image
 
 %% Create RGB Array for f19 MIP image using thresholding
@@ -58,12 +58,11 @@ for slice=1:18
     end
 end
 
-% Plot RGB Image
+% Plot RGB Image on Figure 2
 
-WantToPlot = 1;
-figure(1);clf
+figure(2);clf
 
-if WantToPlot
+if PlotRGBImageBool
     
     subplot(4,4,1)
     imshow(squeeze(RGB_F19_MATRIX(:,:,2,:)))
@@ -103,12 +102,12 @@ if WantToPlot
 end
 
 %% Save figure (optional)
-% FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\updated_RGB_f19\moderate\');  mkdir(FigureDirectory);
-% FigureName = strcat('Registration_Patient_',string(patientNumber));
-% FileName = char(strcat(FigureDirectory,FigureName,'.png'));
-% saveas(gcf,FileName)
-
-
+if SaveRGBImageBool
+    FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\updated_RGB_f19\moderate\');  mkdir(FigureDirectory);
+    FigureName = strcat('Registration_Patient_',string(patientNumber));
+    FileName = char(strcat(FigureDirectory,FigureName,'.png'));
+    saveas(gcf,FileName)
+end
 
 end
 

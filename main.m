@@ -11,13 +11,17 @@ moderate = [7;8;10;12;14;34];
 %% Choose Parameters for Running
 % Choose patients
 patients = 18;
-% Choose plots and saving
-PlotMIPImageBool = 0;
+% MIP image - figure 1
+PlotMIPImageBool = 1;
 SaveMIPImageBool = 0;
-
-PlotSixSegmentModelBool = 1; % 1 for plotting 6 segment model
-SaveSixSegmentModelBool =0; % 1 for saving 6 segment model figures
-WriteCSVDataBool = 0; % 1 for saving CSV data
+% RGB Image - figure 2
+PlotRGBImageBool = 1;
+SaveRGBImageBool = 0;
+% Six Segment Image - figure 3
+PlotSixSegmentModelBool = 0; 
+SaveSixSegmentModelBool =0; 
+% Save CSV data to file
+WriteCSVDataBool = 0; 
 
 %% Loop through selected subjects
 for i = 1:length(patients)
@@ -66,9 +70,9 @@ for i = 1:length(patients)
         PlotMIPImage(patients(i), SaveMIPImageBool, f19_lung, low_vent, high_vent)
     end
     
-    %% Create RGB Maps for Image
+    %% Create and Plot RGB Maps
     % background = 0.5 is just above 0
-    [f19_rgb , UnventilatedMap ,  LowVentMap , MiddleVentMap , HighVentMap] = PlotRGB_f19(patients(i),f19_lung, 0.5, low_vent, mid_vent, high_vent);
+    [f19_rgb , UnventilatedMap ,  LowVentMap , MiddleVentMap , HighVentMap] = PlotRGB_f19(patients(i),PlotRGBImageBool,SaveRGBImageBool,f19_lung, 0.5, low_vent, mid_vent, high_vent);
     
     %% Create 6 Segment Model and Compute Volumes of Segments
     [ UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight ] = ComputeSixLungSegments( MOVING_transformed );
