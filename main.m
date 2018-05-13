@@ -10,7 +10,7 @@ mild = [9;13;18;20;24;25;28;29;30;32;33;35];
 moderate = [7;8;10;12;14;34];
 
 % choose set
-patients = 18;
+patients = 14;
 for i = 1:length(patients)
     
     % load ventilaion
@@ -218,19 +218,6 @@ for i = 1:length(patients)
     HighlyVentilatedVolumes(i)     = sum(HighVentMap(:)    )*.3125*.3125*1.5;
     
 end
-
-% Display to command
-AnatomicVolumes = AnatomicVolumes'
-
-MinimalVentPercent = 100*(UnventilatedVolumes'+MinimallyVentilatedVolumes')./AnatomicVolumes
-
-
-VentilationDefectPercent = 100*UnventilatedVolumes'./AnatomicVolumes
-MEAN_VDP = mean(VentilationDefectPercent)
-STD_VDP  = std(VentilationDefectPercent)
-
-MEAN_MVP = mean(MinimalVentPercent)
-STD_MVP  = std(MinimalVentPercent)
 
 %close all
 
