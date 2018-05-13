@@ -12,7 +12,9 @@ moderate = [7;8;10;12;14;34];
 % Choose patients
 patients = 14;
 % Choose plots and saving
-WriteCSVData = 0; % 1 for saving CSV data
+PlotSixSegmentModelBool = 1; % 1 for plotting 6 segment model
+SaveSixSegmentModelBool =0; % 1 for saving 6 segment model figures
+WriteCSVDataBool = 0; % 1 for saving CSV data
 
 %% Loop through selected subjects
 for i = 1:length(patients)
@@ -45,10 +47,7 @@ for i = 1:length(patients)
     
     %% Remove end slices from registered anatomic outline
     MOVING_transformed = RemoveEdgeSlices(MOVING_transformed);
-    
-    %% Show MIP Image
-    %figure(3);clf
-    
+       
     %% Format MIP Image
     MIP = max(image,[],4);
     clear image
@@ -56,8 +55,12 @@ for i = 1:length(patients)
     
     %% Select only MIP inside anatomic
     f19_lung = MIP.*double(MOVING_transformed);
-    plot_title = sprintf('Subject %i', patients(i));
-    %
+    
+    
+    %plot_title = sprintf('Subject %i', patients(i));
+    
+    % show MIP image
+    % figure(3);clf
     %     window_f19 = [16 45];
     
     %
@@ -103,22 +106,26 @@ for i = 1:length(patients)
     %     FileName = char(strcat(FigureDirectory,FigureName,'.png'));
     %     saveas(gcf,FileName)
     
-    %% Get Values for lowvent, midvent, highvent
+    %% Compute Values for lowvent, midvent, highvent
     [low_vent, mid_vent, high_vent] = FindMIPThresholdValues(MIP);
     
     %% Create RGB Maps for Image
     % background = 0.5 is just above 0
-    [f19_rgb UnventilatedMap MinimalVentMap ModerateVentMap HighVentMap] = PlotRGB_f19(patients(i),f19_lung, 0.5, low_vent, mid_vent, high_vent);
+    [f19_rgb , UnventilatedMap ,  LowVentMap , MiddleVentMap , HighVentMap] = PlotRGB_f19(patients(i),f19_lung, 0.5, low_vent, mid_vent, high_vent);
     
     %% Create 6 Segment Model and Compute Volumes of Segments
     [ UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight ] = ComputeSixLungSegments( MOVING_transformed );
-    PlotSixLungSegmentsRGB(patients(i) , UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
     UpperLeftVolumes(i)   = sum(UpperLeft(:)  )*.3125*.3125*1.5;
     MiddleLeftVolumes(i)  = sum(MiddleLeft(:) )*.3125*.3125*1.5;
     LowerLeftVolumes(i)   = sum(LowerLeft(:)  )*.3125*.3125*1.5;
     UpperRightVolumes(i)  = sum(UpperRight(:) )*.3125*.3125*1.5;
     MiddleRightVolumes(i) = sum(MiddleRight(:))*.3125*.3125*1.5;
     LowerRightVolumes(i)  = sum(LowerRight(:) )*.3125*.3125*1.5;
+    
+    %% Plot Six Segment Model if Chosen
+    if PlotSixSegmentModelBool
+        PlotSixLungSegmentsRGB(patients(i) , UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
+    end
     
     % Plot Unventilated Map
     %PlotUnventilatedMap(patients(i),UnventilatedMap);
@@ -142,22 +149,20 @@ for i = 1:length(patients)
     cd(home)
     
     %% Compute Ventilated Volumes By Type
-    AnatomicVolumes(i)             = sum(MOVING_transformed(:))*0.3125*0.3125*1.5;
-    UnventilatedVolumes(i)         = sum(UnventilatedMap(:))   *0.3125*0.3125*1.5;
-    MinimallyVentilatedVolumes(i)  = sum(MinimalVentMap(:))    *0.3125*0.3125*1.5;
-    ModeratelyVentilatedVolumes(i) = sum(ModerateVentMap(:))   *0.3125*0.3125*1.5;
-    HighlyVentilatedVolumes(i)     = sum(HighVentMap(:))       *0.3125*0.3125*1.5;
+    AnatomicVolumes(i)         = sum(MOVING_transformed(:))*0.3125*0.3125*1.5;
+    UnventilatedVolumes(i)     = sum(UnventilatedMap(:))   *0.3125*0.3125*1.5;
+    LowVentilatedVolumes(i)    = sum(LowVentMap(:))        *0.3125*0.3125*1.5;
+    MiddleVentilatedVolumes(i) = sum(MiddleVentMap(:))     *0.3125*0.3125*1.5;
+    HighVentilatedVolumes(i)   = sum(HighVentMap(:))       *0.3125*0.3125*1.5;
     
 end
 
-%close all
-
 %% Write Ventilation Data to CSV if Selected
-if WriteCSVData
+if WriteCSVDataBool
     % create data matrix
-    f19DataMatrix = [patients AnatomicVolumes UnventilatedVolumes' MinimallyVentilatedVolumes' ModeratelyVentilatedVolumes' HighlyVentilatedVolumes'...
-                     100*UnventilatedVolumes'./AnatomicVolumes 100*MinimallyVentilatedVolumes'./AnatomicVolumes ...
-                     100*ModeratelyVentilatedVolumes'./AnatomicVolumes 100*HighlyVentilatedVolumes'./AnatomicVolumes];
+    f19DataMatrix = [patients AnatomicVolumes UnventilatedVolumes' LowVentilatedVolumes' MiddleVentilatedVolumes' HighVentilatedVolumes'...
+                     100*UnventilatedVolumes'./AnatomicVolumes 100*LowVentilatedVolumes'./AnatomicVolumes ...
+                     100*MiddleVentilatedVolumes'./AnatomicVolumes 100*HighVentilatedVolumes'./AnatomicVolumes];
     % make header
     cHeader = {'PatientNumber' 'AnatomicVolume(mL)' 'UnventilatedVolume(mL)' 'LowVentVolume(mL)' 'MediumVentVolume(mL)' 'HighVentVolume(mL)' 'Unventilated%' 'LowVent%' 'MediumVent%' 'HighVent%' };
     commaHeader = [cHeader;repmat({','},1,numel(cHeader))]; %insert commaas
