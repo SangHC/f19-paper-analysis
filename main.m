@@ -10,7 +10,7 @@ moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = moderate;
+patients = normals;
 % MIP image - figure 1
 PlotMIPImageBool = 0;
 SaveMIPImageBool = 0;
@@ -95,7 +95,6 @@ for i = 1:length(patients)
     end
     
     %% Pause and return to home
-    pause(0.01)
     cd(home)
     
     %% Compute Ventilated Volumes By Type
