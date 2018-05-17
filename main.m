@@ -10,12 +10,12 @@ moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = normals;
+patients = 7;
 % MIP image - figure 1
 PlotMIPImageBool = 0;
 SaveMIPImageBool = 0;
 % RGB Image - figure 2
-PlotRGBImageBool = 0;
+PlotRGBImageBool = 1;
 SaveRGBImageBool = 0;
 % Six Segment Image - figure 3
 PlotSixSegmentModelBool = 0; 
@@ -70,15 +70,15 @@ for i = 1:length(patients)
     end
     
     %% Compute Values for lowvent, midvent, highvent
-    [low_vent, mid_vent, high_vent] = FindMIPThresholdValues(MIP , f19_lung);
+    [low_vent(i), mid_vent(i), high_vent(i), max_vent(i)] = FindMIPThresholdValues(MIP , f19_lung);
     
     %% Plot MIP Image on Figure 1 if Selected
     if PlotMIPImageBool
-        PlotMIPImage(patients(i), SaveMIPImageBool, f19_lung, low_vent, high_vent)
+        PlotMIPImage(patients(i), SaveMIPImageBool, f19_lung, low_vent(i), high_vent(i))
     end
     
     %% Create and Plot RGB Maps on Figure 2 if selected
-    [f19_rgb , UnventilatedMap ,  LowVentMap , MiddleVentMap , HighVentMap] = PlotRGB_f19(patients(i),PlotRGBImageBool,SaveRGBImageBool,f19_lung, 0.5, low_vent, mid_vent, high_vent);
+    [f19_rgb , UnventilatedMap ,  LowVentMap , MiddleVentMap , HighVentMap] = PlotRGB_f19(patients(i),PlotRGBImageBool,SaveRGBImageBool,f19_lung, 0.5, low_vent(i), mid_vent(i), high_vent(i));
     
     %% Create 6 Segment Model and Compute Volumes of Segments
     [ UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight ] = ComputeSixLungSegments( MOVING_transformed );
@@ -106,12 +106,14 @@ for i = 1:length(patients)
     
 end
 
-VDP = (100*UnventilatedVolumes./AnatomicVolumes)';
+VDP = (100*UnventilatedVolumes./AnatomicVolumes)'
 meanVDP = mean(VDP)
 stdVDP  = std(VDP)
 LVP = (100*(UnventilatedVolumes+LowVentilatedVolumes)./AnatomicVolumes)';
 meanLVP = mean(LVP)
 stdLVP  = std(LVP)
+max_vent'
+meanMaxVent = mean(max_vent)
 
 %% Write Ventilation Data to CSV if Selected
 if WriteCSVDataBool
