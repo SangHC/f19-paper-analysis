@@ -22,8 +22,8 @@ high_vent = bgd_mean + 10*bgd_std; % 10 stds
 insidelungMIITvals = f19_lung(find(f19_lung>0));
 MaxVentilation     = prctile(insidelungMIITvals,90);
 
-low_vent  = bgd_mean +  0.1*(MaxVentilation-bgd_mean); % 10% of max ventilation
-mid_vent  = bgd_mean +  0.3*(MaxVentilation-bgd_mean); % 30% of max ventilation
-high_vent = bgd_mean +  0.5*(MaxVentilation-bgd_mean); % 50% of max ventilation
+low_vent  = bgd_mean +  0.1 *(MaxVentilation-bgd_mean); % 10% of max ventilation
+mid_vent  = bgd_mean +  0.3 *(MaxVentilation-bgd_mean); % 30% of max ventilation
+high_vent = bgd_mean +  0.5 *(MaxVentilation-bgd_mean); % 50% of max ventilation
 
 end
