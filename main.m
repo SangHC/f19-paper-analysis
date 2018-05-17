@@ -10,18 +10,20 @@ moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = all;
+patients = 39;
 % MIP image - figure 1
 PlotMIPImageBool = 0;
 SaveMIPImageBool = 0;
 % RGB Image - figure 2
-PlotRGBImageBool = 0;
+PlotRGBImageBool = 1;
 SaveRGBImageBool = 0;
 % Six Segment Image - figure 3
 PlotSixSegmentModelBool = 0; 
-SaveSixSegmentModelBool =0; 
+SaveSixSegmentModelBool =0;
+% F19 histogram image - figure 4
+PlotF19HistogramBool = 1; 
 % Save CSV data to file
-WriteCSVDataBool = 1; 
+WriteCSVDataBool = 0; 
 
 %% Loop through selected subjects
 for i = 1:length(patients)
@@ -61,6 +63,11 @@ for i = 1:length(patients)
     MIP = imresize(MIP,[128,128]);    
     % Select only MIP inside anatomic
     f19_lung = MIP.*double(MOVING_transformed);
+    
+    %% Plot F19 Histogram on Figure 4 if selected
+    if PlotF19HistogramBool
+        [P90data(i) , meantop10data(i)] = PlotF19Histogram(patients(i), f19_lung);
+    end
     
     %% Compute Values for lowvent, midvent, highvent
     [low_vent, mid_vent, high_vent] = FindMIPThresholdValues(MIP);
