@@ -10,18 +10,18 @@ moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = 39;
+patients = moderate;
 % MIP image - figure 1
 PlotMIPImageBool = 0;
 SaveMIPImageBool = 0;
 % RGB Image - figure 2
-PlotRGBImageBool = 1;
+PlotRGBImageBool = 0;
 SaveRGBImageBool = 0;
 % Six Segment Image - figure 3
 PlotSixSegmentModelBool = 0; 
 SaveSixSegmentModelBool =0;
 % F19 histogram image - figure 4
-PlotF19HistogramBool = 1; 
+PlotF19HistogramBool = 0; 
 % Save CSV data to file
 WriteCSVDataBool = 0; 
 
@@ -70,7 +70,7 @@ for i = 1:length(patients)
     end
     
     %% Compute Values for lowvent, midvent, highvent
-    [low_vent, mid_vent, high_vent] = FindMIPThresholdValues(MIP);
+    [low_vent, mid_vent, high_vent] = FindMIPThresholdValues(MIP , f19_lung);
     
     %% Plot MIP Image on Figure 1 if Selected
     if PlotMIPImageBool
@@ -106,6 +106,13 @@ for i = 1:length(patients)
     HighVentilatedVolumes(i)   = sum(HighVentMap(:))       *0.3125*0.3125*1.5;
     
 end
+
+VDP = (100*UnventilatedVolumes./AnatomicVolumes)';
+meanVDP = mean(VDP)
+stdVDP  = std(VDP)
+LVP = (100*(UnventilatedVolumes+LowVentilatedVolumes)./AnatomicVolumes)';
+meanLVP = mean(LVP)
+stdLVP  = std(LVP)
 
 %% Write Ventilation Data to CSV if Selected
 if WriteCSVDataBool
