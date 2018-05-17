@@ -13,9 +13,17 @@ background = [slice1;slice18]; background = background(:);
 bgd_mean = mean(background);
 bgd_std  =  std(background);
 
-%% Compute Ventilation Thresholds
+%% Compute Ventilation Thresholds using bgd mean+std
 low_vent  = bgd_mean +  3*bgd_std; % 3 stds
 mid_vent  = bgd_mean +  6*bgd_std; % 6 stds
 high_vent = bgd_mean + 10*bgd_std; % 10 stds
+
+%% Compute Ventilation Thresholds using percent max ventilation
+insidelungMIIT = f19_lung(find(f19_lung>0));
+percentile90   = prctile(insidelungMIIT,90);
+
+low_vent  = bgd_mean +  0.1*(percentile90-bgd_mean);
+mid_vent  = bgd_mean +  0.3*(percentile90-bgd_mean);
+high_vent = bgd_mean +  0.5*(percentile90-bgd_mean);
 
 end
