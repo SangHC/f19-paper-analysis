@@ -103,8 +103,8 @@ end
 
 %% Save figure (optional)
 if SaveRGBImageBool
-    FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\updated_RGB_f19\moderate\');  mkdir(FigureDirectory);
-    FigureName = strcat('Registration_Patient_',string(patientNumber));
+    FigureDirectory    = strcat('.\outputs\RGB_f19\');  mkdir(FigureDirectory);
+    FigureName = strcat('f19_RGB_Patient_',string(patientNumber));
     FileName = char(strcat(FigureDirectory,FigureName,'.png'));
     saveas(gcf,FileName)
 end
