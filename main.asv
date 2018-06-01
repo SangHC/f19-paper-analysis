@@ -37,7 +37,6 @@ for i = 1:length(patients)
     load(filename);
     % format fixed F19 image to same size as moving 1h mri
     fixed = imresize(roi,[128,128]);
-    cd(home)
     
     % load anatomical 1h mri
     cd('.\data\inspiration_anatomic_segmentations')
@@ -131,9 +130,9 @@ if WriteCSVDataBool
     commaHeader = commaHeader(:)';
     textHeader = cell2mat(commaHeader); %cHeader in text with commas
     %write header to file
-    fid = fopen('.\outputs\F19ventilationdata.csv','w');
+    fid = fopen('G:\2017-Glass\f19_fit_results\F19ventilationdata.csv','w');
     fprintf(fid,'%s\n',textHeader);
     fclose(fid);
     %write data to end of file
-    dlmwrite('.\outputs\F19ventilationdata.csv',f19DataMatrix,'-append');    
+    dlmwrite('G:\2017-Glass\f19_fit_results\F19ventilationdata.csv',f19DataMatrix,'-append');    
 end
