@@ -23,7 +23,9 @@ SaveSixSegmentModelBool =0;
 % F19 histogram image - figure 4
 PlotF19HistogramBool = 0; 
 % Save CSV data to file
-WriteCSVDataBool = 0; 
+WriteCSVDataBool = 0;
+% Save tau1 data to file
+WriteTau1DataBool = 0;
 
 %% Loop through selected subjects
 for i = 1:length(patients)
@@ -94,7 +96,7 @@ for i = 1:length(patients)
         PlotSixLungSegmentsRGB(patients(i) , SaveSixSegmentModelBool,UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
     end
     
-    %% Pause and return to home
+    %% Return home
     cd(home)
     
     %% Compute Ventilated Volumes By Type
@@ -112,7 +114,7 @@ stdVDP  = std(VDP)
 LVP = (100*(UnventilatedVolumes+LowVentilatedVolumes)./AnatomicVolumes)';
 meanLVP = mean(LVP)
 stdLVP  = std(LVP)
-max_vent'
+max_vent';
 meanMaxVent = mean(max_vent)
 
 %% Write Ventilation Data to CSV if Selected
