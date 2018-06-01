@@ -3,19 +3,19 @@ clear;clc;
 home = pwd;
 
 %% Subject Groups
-all = [2;3;4;5;7;8;9;10;12;13;14;15;16;17;18;19;20;24;25;26;28;29;30;31;32;33;34;35;37;39;40];
-normals = [2;3;4;5;15;16;17;19;26;31;37;39;40];
+all = [2;3;4;5;7;8;9;10;12;13;14;15;16;17;18;19;20;24;25;26;28;29;30;31;32;33;34;35;37;39;40;41];
+normals = [2;3;4;5;15;16;17;19;26;31;37;39;40;41];
 mild = [9;13;18;20;24;25;28;29;30;32;33;35];
 moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = 7;
+patients = all;
 % MIP image - 2 1
 PlotMIPImageBool = 0;
 SaveMIPImageBool = 0;
 % RGB Image - figure 2
-PlotRGBImageBool = 1;
+PlotRGBImageBool = 0;
 SaveRGBImageBool = 0;
 % Six Segment Image - figure 3
 PlotSixSegmentModelBool = 0; 
@@ -52,7 +52,7 @@ for i = 1:length(patients)
     addpath('./functions')
        
     %% Stretch moving to match respiratory effort of fixed
-    moving = Stretch_Functional3D(moving,fixed);
+    [moving ApexBaseStretchRatio(i) LeftRightStretchRatio(i)] = Stretch_Functional3D(moving,fixed);
     
     %% Use Translation Registration to Align Images
     [optimizer, metric] = imregconfig('monomodal');
