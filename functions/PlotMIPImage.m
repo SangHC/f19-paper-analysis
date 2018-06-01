@@ -48,8 +48,8 @@ pause(0.2)
 
 %% Save figure
 if SaveMIPImageBool
-    FigureDirectory    = strcat('G:\2017-Glass\f19_fit_results\MIP_registered\moderateORsevere\');  mkdir(FigureDirectory);
-    FigureName = strcat('Registration_Patient_',string(patients(i)));
+    FigureDirectory    = strcat('.\outputs\MIP_f19\');  mkdir(FigureDirectory);
+    FigureName = strcat('MIP_Patient_',string(PatientNumber));
     FileName = char(strcat(FigureDirectory,FigureName,'.png'));
     saveas(gcf,FileName)
 end
