@@ -10,8 +10,8 @@ moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = 18;
-% MIP image - figure 1
+patients = 7;
+% MIP image - 2 1
 PlotMIPImageBool = 0;
 SaveMIPImageBool = 0;
 % RGB Image - figure 2
@@ -25,7 +25,7 @@ PlotF19HistogramBool = 0;
 % Save CSV data to file
 WriteCSVDataBool = 0;
 % Save tau1 data to file
-WriteTau1DataBool = 0;
+WriteTau1DataBool = 1;
 
 %% Loop through selected subjects
 for i = 1:length(patients)
@@ -62,6 +62,7 @@ for i = 1:length(patients)
     MOVING_transformed = RemoveEdgeSlices(MOVING_transformed);
        
     %% Format MIP Image
+    f19_RAW = image;
     MIP = max(image,[],4);
     clear image % to avoid variable name confusion
     MIP = imresize(MIP,[128,128]);    
@@ -107,6 +108,26 @@ for i = 1:length(patients)
     LowVentilatedVolumes(i)    = sum(LowVentMap(:))        *0.3125*0.3125*1.5;
     MiddleVentilatedVolumes(i) = sum(MiddleVentMap(:))     *0.3125*0.3125*1.5;
     HighVentilatedVolumes(i)   = sum(HighVentMap(:))       *0.3125*0.3125*1.5;
+    
+    %% Compute Washin and Washout Dynamics
+    if WriteTau1DataBool
+        % load data for First and Last PFP Times
+        first_last_PFP_data = load('first_last_PFP.txt');
+        first_PFP = first_last_PFP_data(2,:);
+        last_PFP = first_last_PFP_data(3,:);
+        % print when starting
+        fprintf('\n\n\nStarting Patient %03d', patients(i))
+        % Get mask for ventilated pixels from MIIT using threshold
+        ROI_VentilationDynamics = f19_lung > low_vent(i);
+        % Process Split Fit
+        [ dF , tau1 , r2_Washin , d0 , tau2 , r2_Washout ] =  SplitFitProcess( f19_RAW , ROI_VentilationDynamics , scantimes , first_PFP(i), last_PFP(i) );
+        % Get mask variable
+        [ PixelAverageMeans , mask ] = ComputePixelAverageIn3DROI( f19_RAW, ROI_VentilationDynamics );
+        % Plot Results
+        PlotSplitFitResultsv2( patients(i), './outputs/f19_fit_figures/', tau1, tau2, dF, d0, r2_Washin, r2_Washout, mask )
+        % Save Parameters
+        SaveFitParameterData(patients(i), './outputs/f19_fit_parameters/', tau1, tau2, dF, d0)
+    end
     
 end
 

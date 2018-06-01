@@ -3,6 +3,7 @@ function [  ] = SaveFitParameterData( PatientNumber, ParameterDirectory, varargi
 
 %% Setup filepath
 PatientTitle = strcat('Patient_',num2str(PatientNumber,'%03d'));
+mkdir(ParameterDirectory);
 
 %% Save all inputs in loop
 fprintf('Saving %d Parameters\n',length(varargin))

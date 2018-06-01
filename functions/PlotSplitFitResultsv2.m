@@ -53,6 +53,7 @@ poorFits = length(find(r2_Washout<0.8));
 title(sprintf('R^2 - Washout (%i<0.8)',poorFits))
 
 %% Save Plot
+mkdir(FigureDirectory);
 saveas(gcf,strcat(FigureDirectory,PatientTitle,'.png'))
 
 end
