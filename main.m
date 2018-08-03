@@ -10,7 +10,7 @@ moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = all;
+patients = 5;
 % MIP image - 2 1
 PlotMIPImageBool = 0;
 SaveMIPImageBool = 0;
@@ -22,10 +22,10 @@ PlotSixSegmentModelBool = 0;
 SaveSixSegmentModelBool =0;
 % F19 histogram image - figure 4
 PlotF19HistogramBool = 0; 
-% Save CSV data to file
-WriteCSVDataBool = 0;
+% Save CSV ventilation data to file
+WriteCSVVentilationDataBool = 0;
 % Save tau1 data to file
-WriteTau1DataBool = 1;
+WriteTau1DataBool = 0;
 
 %% Loop through selected subjects
 for i = 1:length(patients)
@@ -141,7 +141,7 @@ max_vent';
 meanMaxVent = mean(max_vent)
 
 %% Write Ventilation Data to CSV if Selected
-if WriteCSVDataBool
+if WriteCSVVentilationDataBool
     % create data matrix
     f19DataMatrix = [patients AnatomicVolumes' UnventilatedVolumes' LowVentilatedVolumes' MiddleVentilatedVolumes' HighVentilatedVolumes'...
                      100*UnventilatedVolumes'./AnatomicVolumes' 100*LowVentilatedVolumes'./AnatomicVolumes' ...
