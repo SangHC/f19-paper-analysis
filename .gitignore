@@ -10,3 +10,4 @@ CTestTestfile.cmake
 *.mat
 outputs/
 data/
+*.asv
