@@ -10,20 +10,23 @@ moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = 5;
-% MIP image - 2 1
+patients = all;
+% MIP image - figure 1
 PlotMIPImageBool = 0;
 SaveMIPImageBool = 0;
 % RGB Image - figure 2
-PlotRGBImageBool = 0;
+PlotRGBImageBool = 1;
 SaveRGBImageBool = 0;
+% Combined RGB Image - figure 5
+PlotCombinedRGBBool = 0;
+SaveCombinedRGBBool = 0;
 % Six Segment Image - figure 3
 PlotSixSegmentModelBool = 0; 
 SaveSixSegmentModelBool =0;
 % F19 histogram image - figure 4
 PlotF19HistogramBool = 0; 
 % Save CSV ventilation data to file
-WriteCSVVentilationDataBool = 0;
+WriteCSVVentilationDataBool = 1;
 % Save tau1 data to file
 WriteTau1DataBool = 0;
 
@@ -36,7 +39,7 @@ for i = 1:length(patients)
     filename = strcat('0509-',num2str(patients(i),'%03d'),'.mat');
     load(filename);
     % format fixed F19 image to same size as moving 1h mri
-    fixed = imresize(roi,[128,128]);
+    fixed = imresize(roi,[64,64]);
     cd(home)
     
     % load anatomical 1h mri
@@ -44,7 +47,7 @@ for i = 1:length(patients)
     filename = strcat('0509-',num2str(patients(i),'%03d'),'.mat');
     load(filename)
     % format anatomical 1h mri moving image
-    moving = imresize(inspiration_ROI, [128,128]);
+    moving = imresize(inspiration_ROI, [64,64]);
     moving(:,:,16:18) = 0; % add slices to make equal image sizes
     
     % back to home directory and add functions path
@@ -65,7 +68,7 @@ for i = 1:length(patients)
     f19_RAW = image;
     MIP = max(image,[],4);
     clear image % to avoid variable name confusion
-    MIP = imresize(MIP,[128,128]);    
+    %MIP = imresize(MIP,[128,128]);    
     % Select only MIP inside anatomic
     f19_lung = MIP.*double(MOVING_transformed);
     
@@ -85,7 +88,14 @@ for i = 1:length(patients)
     %% Create and Plot RGB Maps on Figure 2 if selected
     [f19_rgb , UnventilatedMap ,  LowVentMap , MiddleVentMap , HighVentMap] = PlotRGB_f19(patients(i),PlotRGBImageBool,SaveRGBImageBool,f19_lung, 0.5, low_vent(i), mid_vent(i), high_vent(i));
     
-    %% Create 6 Segment Model and Compute Volumes of Segments
+    %% Create and Plot combined RGB Image
+    if PlotCombinedRGBBool
+        
+    
+    %% 6 Segment Model
+    if PlotSixSegmentModelBool
+    
+    % Compute 6 segments
     [ UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight ] = ComputeSixLungSegments( MOVING_transformed );
     UpperLeftVolumes(i)   = sum(UpperLeft(:)  )*.3125*.3125*1.5;
     MiddleLeftVolumes(i)  = sum(MiddleLeft(:) )*.3125*.3125*1.5;
@@ -94,10 +104,10 @@ for i = 1:length(patients)
     MiddleRightVolumes(i) = sum(MiddleRight(:))*.3125*.3125*1.5;
     LowerRightVolumes(i)  = sum(LowerRight(:) )*.3125*.3125*1.5;
     
-    %% Plot Six Segment Model on Figure 3 if Selected
-    if PlotSixSegmentModelBool
-        PlotSixLungSegmentsRGB(patients(i) , SaveSixSegmentModelBool,UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
+    %Plot Six Segment Model on Figure 3 if Selected
+    PlotSixLungSegmentsRGB(patients(i) , SaveSixSegmentModelBool,UpperLeft, MiddleLeft, LowerLeft, UpperRight, MiddleRight, LowerRight)
     end
+    
     
     %% Return home
     cd(home)

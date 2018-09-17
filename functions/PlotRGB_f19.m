@@ -2,16 +2,19 @@ function [ RGB_F19_MATRIX UnventilatedMap MinimalVentMap ModerateVentMap HighVen
 %Creates RGB matrix for f19 MIP and plots resulting rgb image
 
 %% Create RGB Array for f19 MIP image using thresholding
+[numrows , numcols , numslices ] = size(f19_image);
 % preallocate for speed
-RGB_F19_MATRIX  = zeros(128,128,18,3,'uint8');
-UnventilatedMap = zeros(128,128,18,'uint8');
-MinimalVentMap  = zeros(128,128,18,'uint8');
-ModerateVentMap = zeros(128,128,18,'uint8');
-HighVentMap     = zeros(128,128,18,'uint8');
+RGB_F19_MATRIX  = zeros(numrows , numcols , numslices, 3,  'uint8');
+UnventilatedMap = zeros(numrows , numcols , numslices, 'uint8');
+MinimalVentMap  = zeros(numrows , numcols , numslices, 'uint8');
+ModerateVentMap = zeros(numrows , numcols , numslices, 'uint8');
+HighVentMap     = zeros(numrows , numcols , numslices, 'uint8');
 
-for slice=1:18
-    for row = 1:128
-        for col = 1:128
+
+
+for slice=1:numslices
+    for row = 1:numrows
+        for col = 1:numcols
             if     (f19_image(row,col,slice)<background)
                 % color grey
                 RGB_F19_MATRIX(row,col,slice,1) = 185;
