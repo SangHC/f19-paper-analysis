@@ -10,15 +10,15 @@ moderate = [7;8;10;12;14;34];
 
 %% Choose Parameters for Running
 % Choose patients
-patients = all;
+patients = moderate;
 % MIP image - figure 1
 PlotMIPImageBool = 0;
 SaveMIPImageBool = 0;
 % RGB Image - figure 2
-PlotRGBImageBool = 1;
+PlotRGBImageBool = 0;
 SaveRGBImageBool = 0;
 % Combined RGB Image - figure 5
-PlotCombinedRGBBool = 0;
+PlotCombinedRGBBool = 1;
 SaveCombinedRGBBool = 0;
 % Six Segment Image - figure 3
 PlotSixSegmentModelBool = 0; 
@@ -90,7 +90,8 @@ for i = 1:length(patients)
     
     %% Create and Plot combined RGB Image
     if PlotCombinedRGBBool
-        
+        CombinedRGBImage(:,:,:,:,i) = ComputeCombinedRGB(patients(i), f19_rgb , f19_lung);
+    end
     
     %% 6 Segment Model
     if PlotSixSegmentModelBool
@@ -149,6 +150,11 @@ meanLVP = mean(LVP)
 stdLVP  = std(LVP)
 max_vent';
 meanMaxVent = mean(max_vent)
+
+%% Plot Combined RGB if selected
+if PlotCombinedRGBBool
+        PlotCombinedRGB(patients, CombinedRGBImage , VDP);
+end
 
 %% Write Ventilation Data to CSV if Selected
 if WriteCSVVentilationDataBool
