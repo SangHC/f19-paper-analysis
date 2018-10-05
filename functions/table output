@@ -1,0 +1,29 @@
+function [data] = xyz_show(mask,peak,R1,R2,d0,dF,t0,t1,patients)
+
+x_a = [1:1:64];
+y_a = flip([1:1:18]);
+z_a = flip([1:1:64]);
+
+
+data = zeros(73728,10);
+count = 1;
+for i = 1:1:18 %scan
+   for j = 1:1:64 %column
+       for k = 1:1:64 %row
+           data(count,:) =  [x_a(j) y_a(i) z_a(k) mask(k,j,i) peak(k,j,i) R1(k,j,i) R2(k,j,i) t0(k,j,i) t1(k,j,i) string(patients)];
+           count = count +1;
+       end
+   end
+end
+
+cHeader = {'X' 'Y' 'Z' 'mask' 'peak' 'R1' 'R2' 't0' 't1' 'subject'}; %dummy header
+commaHeader = [cHeader;repmat({','},1,numel(cHeader))]; %insert commaas
+commaHeader = commaHeader(:)';
+textHeader = cell2mat(commaHeader); %cHeader in text with commas
+fid = fopen('data.csv','a'); 
+fprintf(fid,'%s\n',textHeader)
+fclose(fid)
+% csvwrite('data.csv',data)
+dlmwrite('data.csv',data,'delimiter',',','-append');
+
+end
